@@ -1,4 +1,4 @@
-const descriptors = [
+module.exports.descriptors = [
     'Miejski',
     'Starozytny',
     'Wodnisty',
@@ -19,7 +19,7 @@ const descriptors = [
     'Polny'
 ]
 
-const places = [
+module.exports.places = [
     'Pokoj',
     'Wioska',
     'Kanion',

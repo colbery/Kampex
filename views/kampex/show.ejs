@@ -1,0 +1,33 @@
+<% layout('layouts/boilerplate.ejs') %>
+
+    <div class="row d-flex justify-content-center">
+        <div class="col-6 offset-3">
+            <div class="card mb-3">
+                <img class="card-img-top" src="<%=kampex.image%>" alt="Card image cap">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <%= kampex.title %>
+                    </h5>
+                    <p class="card-text">
+                        <%=kampex.description%>
+                    </p>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item text-muted">
+                        <%= kampex.location %>
+                    </li>
+                    <li class="list-group-item">
+                        <%= kampex.price %>zl / za dzien
+                    </li>
+                </ul>
+                <div class="card-body">
+                    <a href="/kampex/<%=kampex._id%>/edit" class="card-link btn btn-info">Edytuj Kampex</a>
+                    <form class="d-inline" action="/kampex/<%=kampex._id%>?_method=DELETE" method="POST">
+                        <button class="btn btn-danger">Usun</button>
+                    </form>
+
+                </div>
+                <div class="card-footer text-muted"><a href="/kampex/">Wszystkie Kampex</a></div>
+            </div>
+        </div>
+    </div>
