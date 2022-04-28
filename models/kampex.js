@@ -6,7 +6,11 @@ const KampexSchema = new Schema({
     image: String,
     price: Number,
     description: String,
-    location: String
+    location: String,
+    reviews: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Review'
+    }]
 });
 
 module.exports = mongoose.model('Kampex', KampexSchema);

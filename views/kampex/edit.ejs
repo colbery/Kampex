@@ -4,18 +4,30 @@
     <div class="row justify-content-md-center">
         <h1 class="text-center">Edytuj Kampex</h1>
         <div class="offset-3 col-6  ">
-            <form action="/kampex/<%=kampex._id%>?_method=PUT" method="POST">
+            <form action="/kampex/<%=kampex._id%>?_method=PUT" method="POST" novalidate class="validateForm">
 
 
                 <div class="mb-3"><label class="form-label" for="title">Tytul</label>
-                    <input class="form-control" type="text" id="title" name="kampex[title]" value="<%=kampex.title%>">
+                    <input class="form-control" type="text" required id="title" name="kampex[title]"
+                        value="<%=kampex.title%>">
+                    <div class="valid-feedback">
+                        👍
+                    </div>
                 </div>
                 <div class="mb-3"><label class="form-label" for="location">Lokalizacja</label>
-                    <input class="form-control" type="text" id="location" name="kampex[location]"
+                    <input class="form-control" type="text" id="location" required name="kampex[location]"
                         value="<%=kampex.location%>">
+                    <div class="valid-feedback">
+                        👍
+                    </div>
                 </div>
                 <div class="mb-3"><label class="form-label" for="image">Zdjecie URL</label>
-                    <input class="form-control" type="text" id="image" name="kampex[image]" value="<%=kampex.image%>">
+                    <input class="form-control" type="text" id="image" name="kampex[image]" required
+                        value="<%=kampex.image%>">
+                    <div class="valid-feedback">
+                        👍
+                    </div>
+
                 </div>
                 <div class="mb-3">
                     <label class="form-label" for="price">Cena Kampex</label>
@@ -24,13 +36,19 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text" id="price-label">ZL</span>
                         </div>
-                        <input type="text" class="form-control" id="price" placeholder="0.00" aria-label="price"
-                            aria-describedby="price-label" name="kampex[price]" value="<%=kampex.price%>">
+                        <input type="number" class="form-control" id="price" placeholder="0.00" aria-label="price"
+                            aria-describedby="price-label" name="kampex[price]" required value="<%=kampex.price%>">
+                        <div class="valid-feedback">
+                            👍
+                        </div>
                     </div>
                 </div>
                 <div class="mb-3"><label class="form-label" for="description">Opis</label>
-                    <textarea class="form-control" type="text" id="description"
-                        name="kampex[description]"><%=kampex.description%></textarea>
+                    <textarea class="form-control" type="text" id="description" name="kampex[description]"
+                        required><%=kampex.description%></textarea>
+                    <div class="valid-feedback">
+                        👍
+                    </div>
                 </div>
 
                 <div class="mb-3">

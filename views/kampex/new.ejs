@@ -3,16 +3,25 @@
         <h1 class="text-center">Nowy Kampex</h1>
         <div class="col-6 offset-3">
 
-            <form action="/kampex" method="POST">
+            <form action="/kampex" method="POST" novalidate class="validateForm">
 
                 <div class="mb-3"><label class="form-label" for="title">Tytul</label>
-                    <input class="form-control" type="text" id="title" name="kampex[title]">
+                    <input class="form-control" type="text" id="title" name="kampex[title]" required>
+                    <div class="valid-feedback">
+                        👍
+                    </div>
                 </div>
                 <div class="mb-3"><label class="form-label" for="location">Lokalizacja</label>
-                    <input class="form-control" type="text" id="location" name="kampex[location]">
+                    <input class="form-control" type="text" id="location" name="kampex[location]" required>
+                    <div class="valid-feedback">
+                        👍
+                    </div>
                 </div>
                 <div class="mb-3"><label class="form-label" for="image">Zdjecie URL</label>
-                    <input class="form-control" type="text" id="image" name="kampex[image]">
+                    <input class="form-control" type="text" id="image" name="kampex[image]" required>
+                    <div class="valid-feedback">
+                        👍
+                    </div>
                 </div>
                 <div class="mb-3">
                     <label class="form-label" for="price">Cena Kampex</label>
@@ -22,11 +31,18 @@
                             <span class="input-group-text" id="price-label">ZL</span>
                         </div>
                         <input type="text" class="form-control" id="price" placeholder="0.00" aria-label="price"
-                            aria-describedby="price-label" name="kampex[price]">
+                            aria-describedby="price-label" name="kampex[price]" required>
+                        <div class="valid-feedback">
+                            👍
+                        </div>
                     </div>
                 </div>
                 <div class="mb-3"><label class="form-label" for="description">Opis</label>
-                    <textarea class="form-control" type="text" id="description" name="kampex[description]"></textarea>
+                    <textarea class="form-control" type="text" id="description" name="kampex[description]"
+                        required></textarea>
+                    <div class="valid-feedback">
+                        👍
+                    </div>
                 </div>
 
                 <div class="mb-3">
