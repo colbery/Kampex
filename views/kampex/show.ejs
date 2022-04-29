@@ -1,7 +1,7 @@
 <% layout('layouts/boilerplate.ejs') %>
 
     <div class="row d-flex justify-content-center">
-        <div class="col-6 offset-3">
+        <div class="col-6 ">
             <div class="card mb-3">
                 <img class="card-img-top" src="<%=kampex.image%>" alt="Card image cap">
                 <div class="card-body">
@@ -29,6 +29,9 @@
                 </div>
                 <div class="card-footer text-muted"><a href="/kampex/">Wszystkie Kampex</a></div>
             </div>
+
+        </div>
+        <div class="col-6">
             <h2>Zostaw Opinie!</h2>
             <form action="/kampex/<%=kampex._id%>/reviews" method="POST" class="mb-3 validateForm" novalidate>
                 <div class=" mb-3">
@@ -45,10 +48,20 @@
                 <button class="btn btn-success">Zamieść</button>
             </form>
             <% for(let review of kampex.reviews){ %>
-                <div class="mb-3">
-                    <p>
-                        <%=review.body%>
-                    </p>
+                <div class="card">
+                    <div class="mb-3 card-body">
+                        <h5 class="card-title">
+                            Ocena:
+                            <%=review.rating%>
+                        </h5>
+                        <p class="card-text">
+                            Opinia:
+                            <%=review.body%>
+                        </p>
+                        <form action="/kampex/<%=kampex._id%>/reviews/<%=review._id%>?_method=DELETE" method="POST">
+                            <button class="btn btn-sm btn-danger">Usun</button>
+                        </form>
+                    </div>
                 </div>
                 <% }%>
         </div>

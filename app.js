@@ -82,6 +82,12 @@ app.post('/kampex/:id/reviews', catchAsync(async (req, res) => {
     res.redirect(`/kampex/${kampex._id}`);
 }));
 
+app.delete('/kampex/:id/reviews/:reviewId', catchAsync(async (req, res) => {
+    const { id, reviewId } = req.params;
+    await Kampex.findByIdAndUpdate(id, { $pull: { reviews: reviewId } });
+    await Review.findByIdAndDelete(reviewId);
+    res.redirect(`/kampex/${id}`);
+}));
 app.all('*', (req, res, next) => {
     next(new ExpressError('Nie ma strony', 404))
 });
