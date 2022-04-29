@@ -50,12 +50,14 @@ app.post('/kampex', catchAsync(async (req, res, next) => {
 }));
 
 app.get('/kampex/:id', catchAsync(async (req, res) => {
-    const kampex = await Kampex.findById(req.params.id);
+    const kampex = await Kampex.findById(req.params.id).populate('reviews');
+    console.log(kampex);
     res.render('kampex/show', { kampex });
 }));
 
 app.get('/kampex/:id/edit', catchAsync(async (req, res) => {
     const kampex = await Kampex.findById(req.params.id);
+
     res.render('kampex/edit', { kampex });
 }));
 
