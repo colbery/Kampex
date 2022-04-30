@@ -2,6 +2,8 @@ const express = require("express");
 const path = require('path');
 const mongoose = require("mongoose");
 const ejsMate = require('ejs-mate');
+const session = require('express-session');
+const flash = require('connect-flash');
 const catchAsync = require('./helper/catchAsync');
 const ExpressError = require('./helper/ExpressError');
 const Kampex = require('./models/kampex');
@@ -27,6 +29,27 @@ app.set('views', path.join(__dirname, 'views'));
 
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
+app.use(express.static(path.join(__dirname, 'public')));
+
+const sessionConfig = {
+    secret: 'secret',
+    resave: false,
+    saveUnitilalized: true,
+    cookie: {
+        httpOnly: true,
+        //tydzien od teraz
+        expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
+        maxAge: 1000 * 60 * 60 * 24 * 7
+    }
+}
+app.use(session(sessionConfig));
+app.use(flash());
+
+app.use((req, res, next) => {
+    res.locals.success = req.flash('success');
+    res.locals.error = req.flash('error');
+    next();
+});
 
 app.get('/', (req, res) => {
     res.render('home');
@@ -45,13 +68,15 @@ app.post('/kampex', catchAsync(async (req, res, next) => {
     if (!req.body.kampex) throw new ExpressError("Bledne dane", 400);
     const kampex = new Kampex(req.body.kampex);
     await kampex.save();
+    req.flash('success', 'Udało się stworzyć nowy Kampex!');
+
     res.redirect(`/kampex/${kampex._id}`)
 
 }));
 
 app.get('/kampex/:id', catchAsync(async (req, res) => {
     const kampex = await Kampex.findById(req.params.id).populate('reviews');
-    console.log(kampex);
+    //console.log(kampex);
     res.render('kampex/show', { kampex });
 }));
 
@@ -84,6 +109,7 @@ app.post('/kampex/:id/reviews', catchAsync(async (req, res) => {
 
 app.delete('/kampex/:id/reviews/:reviewId', catchAsync(async (req, res) => {
     const { id, reviewId } = req.params;
+    //puluje id z reviews a reviews to jest array  
     await Kampex.findByIdAndUpdate(id, { $pull: { reviews: reviewId } });
     await Review.findByIdAndDelete(reviewId);
     res.redirect(`/kampex/${id}`);
