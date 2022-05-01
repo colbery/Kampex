@@ -8,8 +8,12 @@ const catchAsync = require('./helper/catchAsync');
 const ExpressError = require('./helper/ExpressError');
 const Kampex = require('./models/kampex');
 const Review = require('./models/review');
+const passport = require('passport');
+const LocalStrategy = require('passport-local');
+const User = require('./models/user');
+const { isLoggedIn } = require('./middleware');
 
-
+const userRoutes = require('./routes/users');
 const methodOverride = require("method-override");
 const kampex = require("./models/kampex");
 
@@ -44,12 +48,21 @@ const sessionConfig = {
 }
 app.use(session(sessionConfig));
 app.use(flash());
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));
+
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
 app.use((req, res, next) => {
+    res.locals.currentUser = req.user;
     res.locals.success = req.flash('success');
     res.locals.error = req.flash('error');
     next();
 });
+
+app.use('/', userRoutes);
 
 app.get('/', (req, res) => {
     res.render('home');
@@ -60,13 +73,16 @@ app.get('/kampex', catchAsync(async (req, res) => {
     res.render('kampex/index', { kampa });
 }));
 
-app.get('/kampex/new', (req, res) => {
+app.get('/kampex/new', isLoggedIn, (req, res) => {
+
     res.render('kampex/new');
 });
 
-app.post('/kampex', catchAsync(async (req, res, next) => {
+app.post('/kampex', isLoggedIn, catchAsync(async (req, res, next) => {
     if (!req.body.kampex) throw new ExpressError("Bledne dane", 400);
+
     const kampex = new Kampex(req.body.kampex);
+    kampex.author = req.user._id;
     await kampex.save();
     req.flash('success', 'Udało się stworzyć nowy Kampex!');
 
@@ -75,35 +91,48 @@ app.post('/kampex', catchAsync(async (req, res, next) => {
 }));
 
 app.get('/kampex/:id', catchAsync(async (req, res) => {
-    const kampex = await Kampex.findById(req.params.id).populate('reviews');
+    const kampex = await Kampex.findById(req.params.id).populate({ path: 'reviews', populate: { path: 'author' } }).populate('author');
+    console.log(kampex);
+    if (!kampex) {
+        req.flash('error', "Nie ma takiego Kampex-a!");
+        return res.redirect('/kampex');
+    }
     //console.log(kampex);
     res.render('kampex/show', { kampex });
 }));
 
-app.get('/kampex/:id/edit', catchAsync(async (req, res) => {
+app.get('/kampex/:id/edit', isLoggedIn, catchAsync(async (req, res) => {
     const kampex = await Kampex.findById(req.params.id);
-
+    if (!kampex) {
+        req.flash('error', "Nie ma takiego Kampex-a!");
+        return res.redirect('/kampex');
+    }
     res.render('kampex/edit', { kampex });
 }));
 
-app.put('/kampex/:id', catchAsync(async (req, res) => {
+app.put('/kampex/:id', isLoggedIn, catchAsync(async (req, res) => {
     const { id } = req.params;
     const kampex = await Kampex.findByIdAndUpdate(id, { ...req.body.kampex });
+    req.flash('success', 'Udało się uaktualnić dany Kampex!');
     res.redirect(`/kampex/${kampex._id}`)
 }));
 
-app.delete('/kampex/:id', catchAsync(async (req, res) => {
+app.delete('/kampex/:id', isLoggedIn, catchAsync(async (req, res) => {
     const { id } = req.params;
     await Kampex.findByIdAndDelete(id);
+    req.flash('success', 'Udało się usunąć dany Kampex!');
+
     res.redirect('/kampex');
 }));
 
 app.post('/kampex/:id/reviews', catchAsync(async (req, res) => {
     const kampex = await Kampex.findById(req.params.id);
     const review = new Review(req.body.review);
+    review.author = req.user._id;
     kampex.reviews.push(review);
     await review.save();
     await kampex.save();
+    req.flash('success', 'Udało się stworzyć nową opinie!')
     res.redirect(`/kampex/${kampex._id}`);
 }));
 
@@ -112,6 +141,7 @@ app.delete('/kampex/:id/reviews/:reviewId', catchAsync(async (req, res) => {
     //puluje id z reviews a reviews to jest array  
     await Kampex.findByIdAndUpdate(id, { $pull: { reviews: reviewId } });
     await Review.findByIdAndDelete(reviewId);
+    req.flash('success', 'Udało się usunąć opinie!');
     res.redirect(`/kampex/${id}`);
 }));
 app.all('*', (req, res, next) => {

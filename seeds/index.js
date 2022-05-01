@@ -16,9 +16,11 @@ const sample = array => array[Math.floor(Math.random() * array.length)];
 const seedDB = async () => {
     await Kampex.deleteMany({});
     for (let i = 0; i < 50; i++) {
+
         const random439 = Math.floor(Math.random() * 439);
         const price = Math.floor(Math.random() * 30) + 10;
         const camp = new Kampex({
+            author: '626e9f0722e573376d2af641',
             location: `${cities[random439].name}`,
             title: `${sample(descriptors)} ${sample(places)}`,
             image: 'https://source.unsplash.com/collection/483251',
