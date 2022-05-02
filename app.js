@@ -12,7 +12,9 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const User = require('./models/user');
 const { isLoggedIn } = require('./middleware');
-
+const mbxGeocoding = require('@mapbox/mapbox-sdk/services/geocoding');
+const mapBoxToken = 'pk.eyJ1Ijoic3Rhcm1hdCIsImEiOiJjbDJubjkwNWUxd21vM2dvN3Q2aXljOGE5In0.n2FoT-jgvQ_LX6gq0B1OUg';
+const geocoder = mbxGeocoding({ accessToken: mapBoxToken });
 const userRoutes = require('./routes/users');
 const methodOverride = require("method-override");
 const kampex = require("./models/kampex");
@@ -79,9 +81,15 @@ app.get('/kampex/new', isLoggedIn, (req, res) => {
 });
 
 app.post('/kampex', isLoggedIn, catchAsync(async (req, res, next) => {
+    const geoData = await geocoder.forwardGeocode({
+        query: req.body.kampex.location,
+        limit: 1
+    }).send()
+
     if (!req.body.kampex) throw new ExpressError("Bledne dane", 400);
 
     const kampex = new Kampex(req.body.kampex);
+    kampex.geometry = geoData.body.features[0].geometry;
     kampex.author = req.user._id;
     await kampex.save();
     req.flash('success', 'Udało się stworzyć nowy Kampex!');

@@ -1,7 +1,9 @@
 <% layout('layouts/boilerplate.ejs') %>
 
     <div class="row d-flex justify-content-center">
+
         <div class="col-6 ">
+            <div id='map' style='width: 400px; height: 300px;'></div>
             <div class="card mb-3">
                 <img class="card-img-top" src="<%=kampex.image%>" alt="Card image cap">
                 <div class="card-body">
@@ -79,5 +81,21 @@
                             </div>
                         </div>
                         <% }%>
+
+
+                            <script>
+                                const kampex = <%- JSON.stringify(kampex) %>;
+
+                                mapboxgl.accessToken = 'pk.eyJ1Ijoic3Rhcm1hdCIsImEiOiJjbDJubjkwNWUxd21vM2dvN3Q2aXljOGE5In0.n2FoT-jgvQ_LX6gq0B1OUg';
+                                const map = new mapboxgl.Map({
+                                    container: 'map', // container ID
+                                    style: 'mapbox://styles/mapbox/streets-v11', // style URL
+                                    center: kampex.geometry.coordinates, // starting position [lng, lat]
+                                    zoom: 10 // starting zoom
+                                });
+
+
+
+                            </script>
         </div>
     </div>
