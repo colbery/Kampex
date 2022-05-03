@@ -15,7 +15,7 @@ const sample = array => array[Math.floor(Math.random() * array.length)];
 
 const seedDB = async () => {
     await Kampex.deleteMany({});
-    for (let i = 0; i < 50; i++) {
+    for (let i = 0; i < 300; i++) {
 
         const random439 = Math.floor(Math.random() * 439);
         const price = Math.floor(Math.random() * 30) + 10;
@@ -25,7 +25,14 @@ const seedDB = async () => {
             title: `${sample(descriptors)} ${sample(places)}`,
             image: 'https://source.unsplash.com/collection/483251',
             description: "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Omnis, ullam cumque? Consectetur, esse numquam eius eos rem doloremque omnis ex aliquam ducimus eaque asperiores? Dolores officia itaque amet animi vero.",
-            price
+            price,
+            geometry: {
+                type: "Point",
+                coordinates: [
+                    cities[random439].E,
+                    cities[random439].N,
+                ]
+            }
         })
         await camp.save();
 
