@@ -1,0 +1,195 @@
+<% layout('layouts/boilerplate.ejs') %>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+<link rel="stylesheet" href="/stylesheets/stars.css">
+<link rel="stylesheet" href="/stylesheets/modal.css">
+<div class="row">
+  <div class="col-6">
+
+
+
+  <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-inner">
+      <% kampex.images.forEach((img, i) => {  %>
+        <div class="carousel-item <%= i === 0 ? 'active' : ''%>">
+          <img src="<%= img.url%>" class="d-block w-100" alt="">
+      </div>
+      <% }) %>
+      
+    </div>
+    <% if(kampex.images.length > 1) {%>
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Next</span>
+    </button>
+    <% } %>
+  </div>
+
+
+
+    <div class="card mb-3">
+       
+       
+      <div class="card-body">
+        <h5 class="card-title"><%= kampex.title %></h5>
+        <p class="card-text"><%=kampex.description%></p>
+      </div>
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item text-muted"><%= kampex.location %></li>
+        <li class="list-group-item">
+          Dodane przez użytkownika : <%= kampex.author.username %>
+        </li>
+        <li class="list-group-item"><%= kampex.price %>zl / za dzien</li>
+      </ul>
+    
+      <% if(currentUser && kampex.author.equals(currentUser._id)){%>
+      <div class="card-body">
+        <a href="/kampex/<%=kampex._id%>/edit" class="card-link btn btn-info"
+          >Edytuj Kampex</a
+        >
+        <form
+          class="d-inline"
+          action="/kampex/<%=kampex._id%>?_method=DELETE"
+          method="POST"
+        >
+          <button class="btn btn-danger">Usun</button>
+        </form>
+        
+      </div>
+
+      <%}%>
+     
+      <div class="card-footer text-muted">
+        
+        <button class="btn btn-success" id="myBtn">Wirtualny Spacer</button>   
+      </div>
+    </div>
+  </div>
+  <div class="col-6">
+    <div id="map"></div>
+    <% if(currentUser) {%>
+    <h2>Zostaw Opinie!</h2>
+    <form
+      action="/kampex/<%=kampex._id%>/reviews"
+      method="POST"
+      class="mb-3 validateForm"
+      novalidate
+    >
+      <!-- <div class="mb-3">
+        <label class="form-label" for="rating">Ocena</label>
+       
+ 
+        <input
+          class="form-range"
+          type="range"
+          min="1"
+          max="5"
+          id="rating"
+          name="review[rating]"
+        />
+      </div> -->
+      <fieldset class="starability-basic">
+        
+        <input type="radio" id="no-rate" class="input-no-rate" name="review[rating]" value="0" checked aria-label="No rating." />
+        <input type="radio" id="first-rate1" name="review[rating]" value="1" />
+        <label for="first-rate1" title="Terrible">1 star</label>
+        <input type="radio" id="first-rate2" name="review[rating]" value="2" />
+        <label for="first-rate2" title="Not good">2 stars</label>
+        <input type="radio" id="first-rate3" name="review[rating]" value="3" />
+        <label for="first-rate3" title="Average">3 stars</label>
+        <input type="radio" id="first-rate4" name="review[rating]" value="4" />
+        <label for="first-rate4" title="Very good">4 stars</label>
+        <input type="radio" id="first-rate5" name="review[rating]" value="5" />
+        <label for="first-rate5" title="Amazing">5 stars</label>
+      </fieldset>
+      
+      <div class="mb-3">
+        <label class="form-label" for="body">Opinia</label>
+        <textarea
+          class="form-control"
+          name="review[body]"
+          id="body"
+          cols="30"
+          rows="3"
+          required
+        ></textarea>
+        <div class="valid-feedback">👍</div>
+      </div>
+      <button class="btn btn-success">Zamieść</button>
+    </form>
+    <% } %> <% for(let review of kampex.reviews){ %>
+    <div class="card">
+      <div class="mb-3 card-body">
+        <!-- <h5 class="card-title">Ocena: <%=review.rating%></h5> -->
+        <p class="starability-result" data-rating="<%=review.rating%>">
+          
+        </p>
+        <h6 class="card-subtitle mb-2 text-muted">
+          Dodane przez : <%= review.author.username%>
+        </h6>
+        <p class="card-text">Opinia: <%=review.body%></p>
+        <% if(currentUser && review.author.equals(currentUser._id)){%>
+        <form
+          action="/kampex/<%=kampex._id%>/reviews/<%=review._id%>?_method=DELETE"
+          method="POST"
+        >
+          <button class="btn btn-sm btn-danger">Usun</button>
+        </form>
+        <% } %>
+      </div>
+    </div>
+    <% }%>
+<!-- The Modal -->
+<div id="myModal" class="modal">
+
+  <!-- Modal content -->
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <iframe
+      width="853"
+      height="480"
+      src="<%=kampex.image1%>"
+      frameborder="0"
+      allowfullscreen
+      allow="xr-spatial-tracking"
+      style="margin: 0 auto;"
+    ></iframe>
+  </div>
+
+</div>
+    <script>
+
+
+      const kampex = <%- JSON.stringify(kampex) %>;
+
+      mapboxgl.accessToken = 'pk.eyJ1Ijoic3Rhcm1hdCIsImEiOiJjbDJubjkwNWUxd21vM2dvN3Q2aXljOGE5In0.n2FoT-jgvQ_LX6gq0B1OUg';
+      const map = new mapboxgl.Map({
+          container: 'map', // container ID
+          style: 'mapbox://styles/mapbox/streets-v11', // style URL
+          center: kampex.geometry.coordinates, // starting position [lng, lat]
+          zoom: 10 // starting zoom
+      });
+
+      map.addControl(new mapboxgl.NavigationControl());
+    </script>
+  </div>
+</div>
+
+
+
+
+
+    <script src="/javascripts/modal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/uevent@2/browser.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/photo-sphere-viewer@4/dist/photo-sphere-viewer.min.js"></script>
+
+<!-- the viewer container must have a defined size -->
+
+
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>

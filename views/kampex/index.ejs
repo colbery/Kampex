@@ -1,0 +1,53 @@
+<% layout('layouts/boilerplate.ejs') %>
+<div style="text-align: center; padding-bottom: 1%">
+  <div>Głowna strona została odwiedzona:</div>
+  <div class="website-counter"></div>
+</div>
+<div id="cluster-map"></div>
+<H1 class="offset-3">Kampex</H1>
+
+<% for (let kamp of kampa) {%>
+<div class="card mb-3 offset-3">
+  <div class="row">
+    <div class="col-md-4">
+      <% if(kamp.images.length > 0) { %>
+      <img class="img-fluid" src="<%=kamp.images[0].url%>" />
+      <% } %>
+    </div>
+    <div class="col-md-8">
+      <div class="car-body">
+        <h5 class="card-title"><%=kamp.title%></h5>
+        <p class="card-text"><%=kamp.description%></p>
+        <p class="card-text">
+          <small class="text-muted"> <%=kamp.location%> </small>
+        </p>
+        <a class="btn btn-primary" href="/kampex/<%=kamp._id%>"
+          >Zobacz <%=kamp.title%></a
+        >
+      </div>
+    </div>
+  </div>
+</div>
+<%}%>
+
+<script>
+
+    var counterContainer = document.querySelector(".website-counter");
+
+      var visitCount = localStorage.getItem("page_view");
+
+      // Check if page_view entry is present
+      if (visitCount) {
+        visitCount = Number(visitCount) + 1;
+        localStorage.setItem("page_view", visitCount);
+      } else {
+        visitCount = 1;
+        localStorage.setItem("page_view", 1);
+      }
+      counterContainer.innerHTML = visitCount;
+
+
+  const kampex = { features:<%- JSON.stringify(kampa) %>};
+</script>
+
+<script src="/javascripts/clusterMap.js"></script>

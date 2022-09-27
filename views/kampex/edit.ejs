@@ -1,0 +1,89 @@
+<% layout('layouts/boilerplate.ejs') %>
+
+<div class="row justify-content-md-center">
+  <h1 class="text-center">Edytuj Kampex</h1>
+  <div class="col-md-6 offset-md-3">
+    <form
+      action="/kampex/<%=kampex._id%>?_method=PUT"
+      method="POST"
+      novalidate
+      class="validateForm"
+    >
+      <div class="mb-3">
+        <label class="form-label" for="title">Tytul</label>
+        <input
+          class="form-control"
+          type="text"
+          required
+          id="title"
+          name="kampex[title]"
+          value="<%=kampex.title%>"
+        />
+        <div class="valid-feedback">👍</div>
+      </div>
+      <div class="mb-3">
+        <label class="form-label" for="location">Lokalizacja</label>
+        <input
+          class="form-control"
+          type="text"
+          id="location"
+          required
+          name="kampex[location]"
+          value="<%=kampex.location%>"
+        />
+        <div class="valid-feedback">👍</div>
+      </div>
+      <div class="mb-3">
+        <label class="form-label" for="image">Spacer Capture</label>
+        <input
+          class="form-control"
+          type="text"
+          id="image"
+          name="kampex[image]"
+          required
+          value="<%=kampex.image1%>"
+        />
+        <div class="valid-feedback">👍</div>
+      </div>
+      <div class="mb-3">
+        <label class="form-label" for="price">Cena Kampex</label>
+
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text" id="price-label">ZL</span>
+          </div>
+          <input
+            type="number"
+            class="form-control"
+            id="price"
+            placeholder="0.00"
+            aria-label="price"
+            aria-describedby="price-label"
+            name="kampex[price]"
+            required
+            value="<%=kampex.price%>"
+          />
+          <div class="valid-feedback">👍</div>
+        </div>
+      </div>
+      <div class="mb-3">
+        <label class="form-label" for="description">Opis</label>
+        <textarea
+          class="form-control"
+          type="text"
+          id="description"
+          name="kampex[description]"
+          required
+        >
+<%=kampex.description%></textarea
+        >
+        <div class="valid-feedback">👍</div>
+      </div>
+
+      <div class="mb-3">
+        <button class="btn btn-info">Zmien Kampex</button>
+      </div>
+    </form>
+    <a href="/kampex/<%=kampex._id%>">Powrot do Kampex</a>
+  </div>
+</div>
